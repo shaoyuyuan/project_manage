@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"  content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <title>{:config('common.title')}</title>
+    <link rel="shortcut icon" href="__STATIC__/admin/favicon.ico">
+    <link href="__STATIC__/admin/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="__STATIC__/admin/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="__STATIC__/admin/css/animate.min.css" rel="stylesheet">
+	<link href="__STATIC__/admin/css/style.min.css?v={:config('common.css_version')}" rel="stylesheet">
+	<script src="__STATIC__/admin/js/jquery.min.js?v=2.1.4"></script>
+	<script src="__STATIC__/admin/js/bootstrap.min.js?v=3.3.5"></script>
+	<!--datetimepicker-->
+	<link rel="stylesheet" href="__STATIC__/admin/css/bootstrap-datetimepicker.min.css">
+	<script src="__STATIC__/admin/js/time/bootstrap-datetimepicker.js"></script>
+	<script src="__STATIC__/admin/js/time/bootstrap-datetimepicker.zh-CN.js"></script>
+
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+		{if session('useroperation') != '查看人'}
+        {include file='common/nav' /}
+		{/if}
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1" {if session('useroperation') == '查看人'}style="margin-left: 0px;"{/if}>
+            
+        	{include file='common/top' /}
+            <div class="row J_mainContent" id="content-main">
+            	<div class="wrapper wrapper-content animated fadeInRight" style="padding-bottom: 0;">
+				<div class="view">
+					<ul class="breadcrumb">
+						<li>
+							<a href="#" class="xyshcolor">工作记录</a>
+						</li>
+					</ul>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="ibox m-n">
+							<div class="ibox-content" id="scrollContent">
+
+								<form class="form-inline m-b-md" method="get" action="{:url('Index/index')}">
+
+									<div class=" m-b-md m-t-sm">
+
+										<div>
+											<div class="form-group m-t-sm m-l-md">
+												<label for="exampleInputName2">部门：</label>
+												<select class="form-control wid220" name="department">
+													<option value="">全部</option>
+													{volist name="department" id="vo"}
+													<option value="{$vo}" {if !empty($query.department) && $query.department==$vo}selected{/if}>{$vo}</option>
+													{/volist}
+												</select>
+											</div>
+											<div class="form-group m-t-sm m-l-md">
+												<label for="exampleInputName2">优先级：</label>
+												<select class="form-control wid220" name="level">
+													<option value="-1" {if isset($query.level) && $query.level=="-1"}selected{/if}>全部</option>
+													{volist name="level" id="vo" key="k"}
+													<option value="{$k-1}" {if isset($query.level) && $query.level==($k-1)}selected{/if}>{$vo.name}</option>
+													{/volist}
+												</select>
+											</div>
+											<div class="form-group m-t-sm m-l-md">
+												<label for="exampleInputName2">负责人：</label>
+												<input type="text" class="form-control" placeholder="负责人" name="person" value="{if !empty($query.person)}{$query.person}{/if}">
+											</div>
+
+											<div class="input-group m-t-sm ">
+												<input type="text" class="form-control" placeholder="标题/内容"name="title" value="{if !empty($query.title)}{$query.title}{/if}">
+												<span class="input-group-btn">
+                                                    <button type="submit" class="btn btn-primary">搜索</button>
+                                                </span>
+											</div>
+											<div class="input-group m-t-sm">
+                                                <span class="input-group-btn">
+                                                    <a class="btn btn-primary borderra" style="margin-left: 5px;" href="{:url('Index/index')}">重置</a>
+                                                </span>
+											</div>
+										</div>
+
+
+									</div>
+
+								</form>
+								<div class="table-responsive">
+									<div class="ibox-content">
+										<div class="form-group m-b-sm">
+											{if session('useroperation') != '查看人' && session('useroperation') != '开发人'}
+											<button class="btn btn-primary btn " onclick="newProject()">新建</button>
+											{/if}
+										</div>
+										<table class="table text-center" style="width: auto">
+											<thead>
+											<tr>
+												{volist name="level" id="vo" key="k"}
+												<th class="{$vo.css}">{$vo.name}</th>
+												{/volist}
+											</tr>
+											</thead>
+										</table>
+										<table class="table table-bordered text-center">
+											<thead>
+												<tr>
+													<th class="text-center">序号</th>
+													<th class="text-center">优先级</th>
+													<th class="text-center">部门</th>
+													<th class="text-center">标题</th>
+													<th class="text-center">内容</th>
+													<th class="text-center">负责人</th>
+													<th class="text-center">城市</th>
+													<th class="text-center">问题提出人</th>
+													<th class="text-center">提出人电话</th>
+													<th class="text-center">录入人</th>
+													<th class="text-center">开始时间</th>
+													<th class="text-center">结束时间</th>
+													<th class="text-center">进度</th>
+													<th class="text-center">操作</th>
+												</tr>
+											</thead>
+											<tbody>
+												{volist name="list" id="vo"}
+												<tr>
+													<td>{$vo.id}</td>
+													<td class="{$vo.css}">{$vo.status}</td>
+													<td>{$vo.department}</td>
+													<td style="width: 15%;">{$vo.title}</td>
+													<td style="width: 30%;">{$vo.remark}</td>
+													<td>{$vo.person}</td>
+													<td>{$vo.city}</td>
+													<td>{$vo.question_person}</td>
+													<td>{$vo.question_tel}</td>
+													<td>{$vo.c_name}</td>
+													<td>{if $vo.start_time}{$vo.start_time|date="Y-m-d H:i"}{else /}{/if}</td>
+													<td>{if $vo.end_time}{$vo.end_time|date="Y-m-d H:i"}{else /}{/if}</td>
+													<td>{$vo.progress.'%'}</td>
+													<td>
+														<button class="btn btn-success btn-xs mtb5" onclick="queryProject('{$vo.id}', '{$vo.title}')">历史记录</button>
+														{if session('useroperation') != '查看人' && session('useroperation') != '提出人'}
+														<button class="btn btn-warning btn-xs mtb5" onclick="edit('{$vo.id}')">领取任务</button>
+														{if session('useroperation') == '超级管理员'}
+														<button class="btn btn-danger btn-xs mtb5" onclick="del('{:url(\'Index/del\',[\'id\'=>$vo.id])}')">删除</button>
+														{/if}
+														{/if}
+													</td>
+												</tr>
+												{/volist}
+
+											</tbody>
+										</table>
+									</div>
+									{$list|raw}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+            </div>
+        	{include file='common/footer' /}
+        </div>
+        <!--右侧部分结束-->
+    </div>
+
+	<!--新建modal-->
+	<div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">项目内容</h4>
+				</div>
+				<div class="modal-body">
+					<div class="ibox-content">
+						<form class="form-horizontal">
+							<div class="row">
+								<input type="hidden" id="id">
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">标题<span style="color: #761c19;">*</span>：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="标题,小于50字" id="title">
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">内容：</label>
+									<div class="col-sm-9">
+										<textarea class="form-control" placeholder="内容" id="remark" rows="5"></textarea>
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">城市：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="城市" id="city">
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">问题提出人：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="问题提出人" id="question_person">
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">问题提电话：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="问题提电话" id="question_tel">
+									</div>
+								</div>
+
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">优先级：</label>
+									<div class="col-sm-9">
+										<select class="form-control" id="level">
+											{volist name="level" id="vo" key="k"}
+											<option value="{$k-1}">{$vo.name}</option>
+											{/volist}
+										</select>
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">部门：</label>
+									<div class="col-sm-9">
+										<select class="form-control" id="department">
+											{volist name="department" id="vo"}
+											<option value="{$vo}">{$vo}</option>
+											{/volist}
+										</select>
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">负责人：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="负责人" id="person">
+									</div>
+								</div>
+								<div style="display: none;" id="modal_status">
+									<div class="form-group col-sm-12 m-b-sm">
+										<label class="col-sm-3 control-label ">预计开始时间：</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control searchDate "id='start_time' placeholder="预计开始时间" readonly="" />
+										</div>
+									</div>
+									<div class="form-group col-sm-12 m-b-sm">
+										<label class="col-sm-3 control-label ">预计结束时间：</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control searchDate "id='end_time' placeholder="预计结束时间" readonly="" />
+										</div>
+									</div>
+									<div class="form-group col-sm-12 m-b-sm">
+										<label class="col-sm-3 control-label ">进度(%)：</label>
+										<div class="col-sm-9">
+											<input type="number" maxlength="100" oninput = "if(value>100)value=100;value=value.replace(/[^\d]/g,'')" class="form-control" placeholder="进度" id="progress">
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="save()">确 定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--项目历史记录表modal-->
+	<div class="modal fade" id="recordListModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">项目历史记录表</h4>
+				</div>
+				<div class="modal-body">
+					<div class="ibox-content">
+						{if session('useroperation') != '查看人' && session('useroperation') != '提出人'}
+						<button class="btn btn-primary btn " id="addRecord">添加新记录</button>
+						{/if}
+						<form class="form-horizontal">
+							<table class="table table-bordered text-center">
+								<thead>
+								<tr>
+									<th class="text-center">序号</th>
+									<th class="text-center">内容</th>
+									<th class="text-center">负责人</th>
+									<th class="text-center">创建时间</th>
+								</tr>
+								</thead>
+								<tbody id="pro_list">
+
+								</tbody>
+							</table>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--新建项目进度记录modal-->
+	<div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">项目进度记录</h4>
+				</div>
+				<div class="modal-body">
+					<div class="ibox-content">
+						<form class="form-horizontal">
+							<div class="row">
+								<input type="hidden" id="pro_id">
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">项目标题：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="pro_title" readonly disabled>
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">内容：</label>
+									<div class="col-sm-9">
+										<textarea class="form-control" placeholder="内容" id="rec_remark" rows="5"></textarea>
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">负责人：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="rec_person">
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">进度(%)：</label>
+									<div class="col-sm-9">
+										<input type="number" maxlength="100" oninput = "if(value>100)value=100;value=value.replace(/[^\d]/g,'')" class="form-control" placeholder="进度" id="rec_progress">
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="saveRecord()">确 定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+    <script src="__STATIC__/admin/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="__STATIC__/admin/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="__STATIC__/admin/js/plugins/layer/layer.min.js"></script>
+    <script src="__STATIC__/admin/js/hplus.min.js?v=4.0.0"></script>
+    <script type="text/javascript" src="__STATIC__/admin/js/contabs.min.js"></script>
+    <script src="__STATIC__/admin/js/plugins/pace/pace.min.js"></script>
+	<!--弹出框-->
+	<script src="__STATIC__/admin/js/layer/layer.js"></script>
+    <link href="__STATIC__/admin/js/layer/theme/default/layer.css" rel="stylesheet">
+
+</body>
+
+<script type="text/javascript">
+	$(function () {
+		//初始化日期插件
+		$('.searchDate').datetimepicker({
+			format: 'yyyy-mm-dd hh:ii',
+			language:  'zh-CN',
+			weekStart: 1,
+			todayBtn:  1,
+			autoclose: 1,
+			todayHighlight: 1,
+			startView: 2,
+			minView: 0,
+			forceParse: 0,
+			minuteStep : 10,
+			pickerPosition:'bottom'//日期插件弹出的位置
+		});
+	})
+	//新建
+	function newProject() {
+		$('#title').val('');
+		$('#remark').val('');
+		$('#person').val('');
+		$('#start_time').val('');
+		$('#end_time').val('');
+		$('#progress').val('');
+		$('#city').val('');
+		$('#question_person').val('');
+		$('#question_tel').val('');
+		$('#level').val(0);
+		$('#department').val('研发部');
+		$('#modal_status').hide();
+		//可写
+		$('#title').attr('readonly',false);
+		$('#remark').attr('readonly',false);
+		$('#level').attr('disabled',false);
+		$('#department').attr('disabled',false);
+		$('#city').attr('readonly', false);
+		$('#question_person').attr('readonly', false);
+		$('#question_tel').attr('readonly', false);
+		$('#newModal').modal('show');
+	}
+	//保存
+	function save() {
+		var id = $('#id').val();
+		var title = $('#title').val();
+		var remark = $('#remark').val();
+		var person = $('#person').val();
+		var start_time = $('#start_time').val();
+		var end_time = $('#end_time').val();
+		var progress = $('#progress').val();
+		var level = $('#level').val();
+		var city = $('#city').val();
+		var question_person = $('#question_person').val();
+		var question_tel = $('#question_tel').val();
+		var department = $('#department').val();
+		if (!title) {
+			reloadTips("请填写标题");
+			return;
+		}
+		if (title.length > 50) {
+			reloadTips("标题需小于50字");
+			return;
+		}
+
+		$.ajax({
+			type: "post",
+			url: "{:url('Index/save')}",
+			data: {
+				id : id,
+				title : title,
+				remark : remark,
+				person : person,
+				start_time : start_time,
+				end_time : end_time,
+				progress : progress,
+				level : level,
+				city : city,
+				question_person : question_person,
+				question_tel : question_tel,
+				department : department,
+			},
+			dataType: "json",
+			success: function(result){
+				// console.log(result);
+				if(result.status == 0){
+					window.location.reload();
+				}else{
+					reloadTips(result);
+				}
+			}
+		});
+	}
+	//编辑
+	function edit(id) {
+
+		$.ajax({
+			type: "post",
+			url: "{:url('Index/getProject')}",
+			data: {
+				id : id,
+			},
+			dataType: "json",
+			success: function(result){
+				// console.log(result.msg);
+				if(result.status == 0){
+					$('#id').val(id);
+					$('#title').val(result.msg.title);
+					$('#remark').val(result.msg.remark);
+					$('#person').val(result.msg.person);
+					$('#start_time').val(result.msg.start_time);
+					$('#end_time').val(result.msg.end_time);
+					$('#progress').val(result.msg.progress);
+					$('#level').val(result.msg.level);
+					$('#city').val(result.msg.city);
+					$('#question_person').val(result.msg.question_person);
+					$('#question_tel').val(result.msg.question_tel);
+					$('#department').val(result.msg.department);
+					//只读
+					$('#title').attr('readonly',true);
+					$('#remark').attr('readonly',true);
+					$('#level').attr('disabled',true);
+					$('#department').attr('disabled',true);
+					$('#city').attr('readonly', true);
+					$('#question_person').attr('readonly', true);
+					$('#question_tel').attr('readonly', true);
+					$('#modal_status').show();
+					$('#newModal').modal('show');
+				}else{
+					reloadTips(result);
+				}
+			}
+		});
+	}
+    //删除
+    function del(url) {
+        layer.msg('是否确定删除该项目', {
+            time: 20000, //20s后自动关闭
+            btn: ['确定', '取消'],
+            yes: function(){
+                // window.location.href = url;
+                $.ajax({
+                    type: "post",
+                    url: url,
+                    data: {},
+                    dataType: "json",
+                    success: function(result){
+                        // console.log(result);
+                        if(result.status == 0){
+                            window.location.reload();
+                        }else{
+                            reloadTips(result);
+                        }
+                    }
+                });
+            },
+            btn2: function(){
+              layer.close();
+            }
+        });
+    }
+
+    //项目记录历史
+	function queryProject(pro_id, title) {
+		//查询历史记录
+
+		$.ajax({
+			type: "post",
+			url: "{:url('Index/queryProject')}",
+			data: {
+				pro_id : pro_id,
+			},
+			dataType: "json",
+			success: function(result){
+				// console.log(result.msg);
+				if(result.status == 0){
+					var html = '';
+					for (x in result.msg) {
+						html += `<tr>
+	                       <td>`+result.msg[x].id+`</td>
+                           <td style="width: 30%;">`+result.msg[x].remark+`</td>
+                           <td>`+result.msg[x].person+`</td>
+                           <td>`+result.msg[x].c_time+`</td>
+						</tr>`;
+					}
+
+					$('#pro_list').html(html);
+					//新建按钮
+					$('#addRecord').attr('onclick', "addRecord("+pro_id+", '"+title+"')");
+					$("#recordListModal").modal('show');
+				}else{
+					reloadTips(result);
+				}
+			}
+		});
+	}
+    //添加项目记录
+	function addRecord(pro_id, pro_title) {
+		$('#pro_id').val(pro_id);
+		$('#pro_title').val(pro_title);
+		$('#rec_remark').val('');
+		$('#rec_progress').val('');
+
+		$("#recordModal").modal('show');
+	}
+	//保存项目记录
+	function saveRecord() {
+
+		var pro_id = $('#pro_id').val();
+		var rec_remark = $('#rec_remark').val();
+		var rec_progress = $('#rec_progress').val();
+		var rec_person = $('#rec_person').val();
+
+		$.ajax({
+			type: "post",
+			url: "{:url('Index/saveRecord')}",
+			data: {
+				pro_id : pro_id,
+				rec_remark : rec_remark,
+				rec_progress : rec_progress,
+				rec_person : rec_person,
+			},
+			dataType: "json",
+			success: function(result){
+				// console.log(result);
+				if(result.status == 0){
+					window.location.reload();
+				}else{
+					reloadTips(result);
+				}
+			}
+		});
+	}
+
+</script>
+</html>

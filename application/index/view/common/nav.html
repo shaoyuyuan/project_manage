@@ -1,0 +1,38 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="nav-close"><i class="fa fa-times-circle"></i>
+    </div>
+    <div class="sidebar-collapse" style="height: inherit;overflow: hidden;">
+        <ul class="nav" id="side-menu">
+            <li class="nav-header"  style="    background-size: cover;">
+                <div class="dropdown profile-element" style="    text-align: center; left: 0!important;">
+                        <img class="img-circle" src="__STATIC__/admin/img/head.jpg" dropdown class="dropdown-toggle" href="#">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear" >
+                                    <span class="block m-t-xs">
+                                        <strong class="font-bold">{:session('name')}</strong>
+                                    </span>
+                                </span>
+                            </a>
+                </div>
+                <div class="logo-element">{:config('common.title')}</div>
+            </li>
+
+                <li class="{eq name='$Request.controller' value='Index'}active{/eq}">
+                    <a href="{:url('Index/index')}">
+                        <i class="fa fa-group"></i>
+                        <span class="nav-label">项目管理</span>
+                    </a>
+                </li>
+                {if session('useroperation') == '超级管理员'}
+                <li class="{eq name='$Request.controller' value='User'}active{/eq}">
+                    <a href="{:url('User/index')}">
+                        <i class="fa fa-gears"></i>
+                        <span class="nav-label">用户管理</span>
+                    </a>
+                </li>
+                {/if}
+
+        </ul>
+    </div>
+</nav>
+<!--左侧导航结束

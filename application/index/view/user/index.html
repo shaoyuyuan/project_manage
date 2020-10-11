@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"  content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <title>{:config('common.title')}</title>
+    <link rel="shortcut icon" href="__STATIC__/admin/favicon.ico">
+    <link href="__STATIC__/admin/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="__STATIC__/admin/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="__STATIC__/admin/css/animate.min.css" rel="stylesheet">
+	<link href="__STATIC__/admin/css/style.min.css?v={:config('common.css_version')}" rel="stylesheet">
+	<script src="__STATIC__/admin/js/jquery.min.js?v=2.1.4"></script>
+	<script src="__STATIC__/admin/js/bootstrap.min.js?v=3.3.5"></script>
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        {include file='common/nav' /}
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            
+        	{include file='common/top' /}
+            <div class="row J_mainContent" id="content-main">
+            	<div class="wrapper wrapper-content animated fadeInRight" style="padding-bottom: 0;">
+				<div class="view">
+					<ul class="breadcrumb">
+						<li>
+							<a href="#" class="xyshcolor">用户管理</a>
+						</li>
+					</ul>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="ibox m-n">
+							<div class="ibox-content" id="scrollContent">
+
+								<div class="table-responsive">
+									<div class="ibox-content">
+										<div class="form-group m-b-sm">
+											<button class="btn btn-primary btn " onclick="newUser()">新建</button>
+										</div>
+										<table class="table table-bordered text-center">
+											<thead>
+												<tr>
+													<th class="text-center">序号</th>
+													<th class="text-center">姓名</th>
+													<th class="text-center">用户名</th>
+													<th class="text-center">角色</th>
+													<th class="text-center">操作</th>
+												</tr>
+											</thead>
+											<tbody>
+												{volist name="list" id="vo"}
+												<tr>
+													<td>{$vo.id}</td>
+													<td>{$vo.name}</td>
+													<td>{$vo.username}</td>
+													<td>{$vo.role}</td>
+													<td>
+														<button class="btn btn-warning btn-xs mtb5" onclick="edit('{$vo.id}','{$vo.name}','{$vo.username}','{$vo.role_id}')">修改</button>
+													</td>
+												</tr>
+												{/volist}
+
+											</tbody>
+										</table>
+									</div>
+									{$list|raw}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+            </div>
+        	{include file='common/footer' /}
+        </div>
+        <!--右侧部分结束-->
+    </div>
+
+	<!--新建modal-->
+	<div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">用户</h4>
+				</div>
+				<div class="modal-body">
+					<div class="ibox-content">
+						<form class="form-horizontal">
+							<div class="row">
+								<input type="hidden" id="id">
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">姓名<span style="color: #761c19;">*</span>：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="姓名" id="name">
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">用户名<span style="color: #761c19;">*</span>：</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="用户名" id="username">
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">密码<span style="color: #761c19;">*</span>：</label>
+									<div class="col-sm-9">
+										<input type="password" class="form-control" placeholder="密码" id="pwd">
+									</div>
+								</div>
+								<div class="form-group col-sm-12 m-b-sm">
+									<label class="col-sm-3 control-label ">角色：</label>
+									<div class="col-sm-9">
+										<select class="form-control" id="roles">
+											{volist name="$roles" id="vo"}
+											<option value="{$vo.id}">{$vo.name}</option>
+											{/volist}
+										</select>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="save()">确 定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <script src="__STATIC__/admin/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="__STATIC__/admin/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="__STATIC__/admin/js/plugins/layer/layer.min.js"></script>
+    <script src="__STATIC__/admin/js/hplus.min.js?v=4.0.0"></script>
+    <script type="text/javascript" src="__STATIC__/admin/js/contabs.min.js"></script>
+    <script src="__STATIC__/admin/js/plugins/pace/pace.min.js"></script>
+	<!--弹出框-->
+	<script src="__STATIC__/admin/js/layer/layer.js"></script>
+    <link href="__STATIC__/admin/js/layer/theme/default/layer.css" rel="stylesheet">
+
+</body>
+
+<script type="text/javascript">
+	//新建
+	function newUser() {
+		$('#name').val('');
+		$('#username').val('');
+		$('#pwd').val('');
+		$('#roles').val(2);
+		$('#username').attr('readonly', false);
+		$('#roles').attr('disabled',false);
+		$('#newModal').modal('show');
+	}
+	//保存
+	function save() {
+		var id = $('#id').val();
+		var name = $('#name').val();
+		var username = $('#username').val();
+		var pwd = $('#pwd').val();
+		var role_id = $('#roles').val();
+		if (!name) {
+			reloadTips("请填写姓名");
+			return;
+		}
+		if (name.length > 30) {
+			reloadTips("标题需小于30字");
+			return;
+		}
+		if (!username) {
+			reloadTips("请填写用户名");
+			return;
+		}
+		if (!pwd) {
+			reloadTips("请填写密码");
+			return;
+		}
+		if (!role_id) {
+			reloadTips("请选择角色");
+			return;
+		}
+		console.log(111);
+		$.ajax({
+			type: "post",
+			url: "{:url('User/save')}",
+			data: {
+				id : id,
+				name : name,
+				username : username,
+				pwd : pwd,
+				role_id : role_id,
+			},
+			dataType: "json",
+			success: function(result){
+				console.log(result);
+				if(result.status == 0){
+					window.location.reload();
+				}else{
+					reloadTips(result);
+				}
+			}
+		});
+	}
+	//编辑
+	function edit(id, name, username, role) {
+
+		$('#id').val(id);
+		$('#name').val(name);
+		$('#username').val(username);
+		$('#roles').val(role);
+		$('#username').attr('readonly', true);
+		$('#roles').attr('disabled',true);
+		$('#newModal').modal('show');
+
+	}
+
+</script>
+</html>

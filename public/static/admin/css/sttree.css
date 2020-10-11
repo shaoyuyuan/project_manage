@@ -1,0 +1,33 @@
+/*simple tree*/
+.st_tree{ width: 100%; margin: 0 auto; padding: 10px;}
+.st_tree a{text-decoration:none;}
+.st_tree ul{padding:0 10px;margin:0;}
+/* 菜单项 */
+.st_tree ul li{
+    color:#222;
+    line-height:22px;
+    cursor:pointer;
+    list-style:none;
+    background:url(../img/st_folder.png) no-repeat;
+    background-size: 20px 20px;
+    padding:0 0 3px 20px;
+}
+/* 子菜单 */
+.st_tree ul li ul{}
+/* 子菜单项 */
+.st_tree ul li ul li{}
+/* 子菜单的父节点 */
+.st_tree .folder{
+    list-style-image:url(../img/st_icon.png);
+    background:url(../img/st_folder.png) no-repeat;
+    background-size: 18px 18px;
+    padding:0 0 0 20px;
+}
+/* 展开的父节点 */
+.st_tree .open{
+    list-style-image:url(../img/st_icon_open.png);
+    background:url(../img/st_folder_open.png) no-repeat;
+    background-size: 18px 18px;
+    padding:0 0 0 20px;
+}
+

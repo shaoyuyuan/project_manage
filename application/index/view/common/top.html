@@ -1,0 +1,72 @@
+<div class="row border-bottom">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+        </div>
+        <ul class="nav  navbar-top-links navbar-right">
+            <li class="dropdown">
+            </li>
+            
+            <li class="dropdown">
+                <a class="dropdown-toggle count-info" href="{:url('Common/outLogin')}">
+                    <i class="fa fa-power-off"></i>
+                </a>
+
+            </li>
+        </ul>
+    </nav>
+</div>
+<div id="loading" style="display: none;"></div>
+<style type="text/css">
+#loading{
+    background:url(__STATIC__/admin/img/loading.gif) no-repeat;
+    position: absolute;
+    width: 480px;
+    height: 300px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    text-align: center;
+    z-index: 99999999;
+}
+</style>
+
+<script type="text/javascript">
+    /**
+     * document.onreadystatechange 页面加载状态改变时的事件
+     * document.readyState  返回当前文档的状态
+     */
+    document.onreadystatechange = function () {
+        console.log(document.readyState);
+        if (document.readyState == 'complete') {
+            $('#loading').fadeOut();
+        }
+    }
+
+    //提示 默认不刷新页面
+    function reloadTips(message, reload) {
+        if(reload == true){
+            layer.open({
+                content: message,
+                btn: ['确定'],
+                yes: function(index, layero){
+                //按钮【按钮一】的回调
+                    window.location.reload();
+                },
+                cancel: function(){
+                //右上角关闭回调
+                    window.location.reload();
+                //return false 开启该代码可禁止点击该按钮关闭
+                }
+            });
+        }else{
+            layer.open({
+                title: '提醒',
+                content: message
+            });
+            return false;
+        }
+    }
+</script>
